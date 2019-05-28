@@ -433,9 +433,9 @@ func MaybeReexecUsingUserNamespace(evenForRoot bool) {
 
 	// Set up a new user namespace with the ID mapping.
 	cmd.UnshareFlags = syscall.CLONE_NEWUSER | syscall.CLONE_NEWNS
-	cmd.UseNewuidmap = uidNum != 0
+	cmd.UseNewuidmap = false
 	cmd.UidMappings = uidmap
-	cmd.UseNewgidmap = uidNum != 0
+	cmd.UseNewgidmap = false
 	cmd.GidMappings = gidmap
 	cmd.GidMappingsEnableSetgroups = true
 
