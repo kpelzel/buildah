@@ -181,11 +181,14 @@ func (c *Cmd) Start() error {
 		if len(c.GidMappings) > 0 {
 			// Build the GID map, since writing to the proc file has to be done all at once.
 			g := new(bytes.Buffer)
-			fmt.Fprintf(os.Stderr, "%v\n", c.GidMappings)
-			fmt.Fprintf(g, "%d %d %d\n", c.GidMappings[0].ContainerID, c.GidMappings[0].HostID, c.GidMappings[0].Size)
-			// for _, m := range c.GidMappings {
-			// 	fmt.Fprintf(g, "%d %d %d\n", m.ContainerID, m.HostID, m.Size)
-			// }
+			if globalFlagResults.Rootless {
+				fmt.Fprintf(g, "%d %d %d\n", c.GidMappings[0].ContainerID, c.GidMappings[0].HostID, c.GidMappings[0].Size)
+			} else {
+				for _, m := range c.GidMappings {
+					fmt.Fprintf(g, "%d %d %d\n", m.ContainerID, m.HostID, m.Size)
+				}
+			}
+
 			// Set the GID map.
 			if c.UseNewgidmap {
 				cmd := exec.Command("newgidmap", append([]string{pidString}, strings.Fields(strings.Replace(g.String(), "\n", " ", -1))...)...)
@@ -198,18 +201,24 @@ func (c *Cmd) Start() error {
 					return errors.Wrapf(err, "error running newgidmap: %s", g.String())
 				}
 			} else {
-				setgroups, err := os.OpenFile(fmt.Sprintf("/proc/%s/setgroups", pidString), os.O_TRUNC|os.O_WRONLY, 0)
+				if globalFlagResults.Rootless {
+					setgroups, err := os.OpenFile(fmt.Sprintf("/proc/%s/setgroups", pidString), os.O_TRUNC|os.O_WRONLY, 0)
+					if err != nil {
+						fmt.Fprintf(continueWrite, "error opening /proc/%s/setgroups: %v", pidString, err)
+						return errors.Wrapf(err, "error opening /proc/%s/setgroups", pidString)
+					}
+					defer setgroups.Close()
+					if _, err := fmt.Fprintf(setgroups, "deny"); err != nil {
+						fmt.Fprintf(continueWrite, "error writing 'deny' to /proc/%s/setgroups: %v", pidString, err)
+						return errors.Wrapf(err, "error writing 'deny' to /proc/%s/setgroups", pidString)
+					}
+				}
 				gidmap, err := os.OpenFile(fmt.Sprintf("/proc/%s/gid_map", pidString), os.O_TRUNC|os.O_WRONLY, 0)
 				if err != nil {
 					fmt.Fprintf(continueWrite, "error opening /proc/%s/gid_map: %v", pidString, err)
 					return errors.Wrapf(err, "error opening /proc/%s/gid_map", pidString)
 				}
 				defer gidmap.Close()
-				defer setgroups.Close()
-				if _, err := fmt.Fprintf(setgroups, "deny"); err != nil {
-					fmt.Fprintf(continueWrite, "error writing 'deny' to /proc/%s/setgroups: %v", pidString, err)
-					return errors.Wrapf(err, "error writing 'deny' to /proc/%s/setgroups", pidString)
-				}
 				if _, err := fmt.Fprintf(gidmap, "%s", g.String()); err != nil {
 					fmt.Fprintf(continueWrite, "error writing %q to /proc/%s/gid_map: %v", g.String(), pidString, err)
 					return errors.Wrapf(err, "error writing %q to /proc/%s/gid_map", g.String(), pidString)
@@ -220,11 +229,14 @@ func (c *Cmd) Start() error {
 		if len(c.UidMappings) > 0 {
 			// Build the UID map, since writing to the proc file has to be done all at once.
 			u := new(bytes.Buffer)
-			fmt.Fprintf(os.Stderr, "%v\n", c.UidMappings)
-			fmt.Fprintf(u, "%d %d %d\n", c.UidMappings[0].ContainerID, c.UidMappings[0].HostID, c.UidMappings[0].Size)
-			// for _, m := range c.UidMappings {
-			// 	fmt.Fprintf(u, "%d %d %d\n", m.ContainerID, m.HostID, m.Size)
-			// }
+			if globalFlagResults.Rootless {
+				fmt.Fprintf(u, "%d %d %d\n", c.UidMappings[0].ContainerID, c.UidMappings[0].HostID, c.UidMappings[0].Size)
+			} else {
+				for _, m := range c.UidMappings {
+					fmt.Fprintf(u, "%d %d %d\n", m.ContainerID, m.HostID, m.Size)
+				}
+			}
+
 			// Set the UID map.
 			if c.UseNewuidmap {
 				cmd := exec.Command("newuidmap", append([]string{pidString}, strings.Fields(strings.Replace(u.String(), "\n", " ", -1))...)...)
@@ -433,9 +445,14 @@ func MaybeReexecUsingUserNamespace(evenForRoot bool) {
 
 	// Set up a new user namespace with the ID mapping.
 	cmd.UnshareFlags = syscall.CLONE_NEWUSER | syscall.CLONE_NEWNS
-	cmd.UseNewuidmap = false
+	if globalFlagResults.Rootless {
+		cmd.UseNewuidmap = false
+		cmd.UseNewgidmap = false
+	} else {
+		cmd.UseNewuidmap = uidNum != 0
+		cmd.UseNewgidmap = uidNum != 0
+	}
 	cmd.UidMappings = uidmap
-	cmd.UseNewgidmap = false
 	cmd.GidMappings = gidmap
 	cmd.GidMappingsEnableSetgroups = true
 
