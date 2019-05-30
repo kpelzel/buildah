@@ -30,6 +30,7 @@ import (
 type Cmd struct {
 	*exec.Cmd
 	UnshareFlags               int
+	Rootless                   bool
 	UseNewuidmap               bool
 	UidMappings                []specs.LinuxIDMapping
 	UseNewgidmap               bool
@@ -181,7 +182,7 @@ func (c *Cmd) Start() error {
 		if len(c.GidMappings) > 0 {
 			// Build the GID map, since writing to the proc file has to be done all at once.
 			g := new(bytes.Buffer)
-			if globalFlagResults.Rootless {
+			if c.Rootless {
 				fmt.Fprintf(g, "%d %d %d\n", c.GidMappings[0].ContainerID, c.GidMappings[0].HostID, c.GidMappings[0].Size)
 			} else {
 				for _, m := range c.GidMappings {
@@ -201,7 +202,7 @@ func (c *Cmd) Start() error {
 					return errors.Wrapf(err, "error running newgidmap: %s", g.String())
 				}
 			} else {
-				if globalFlagResults.Rootless {
+				if c.Rootless {
 					setgroups, err := os.OpenFile(fmt.Sprintf("/proc/%s/setgroups", pidString), os.O_TRUNC|os.O_WRONLY, 0)
 					if err != nil {
 						fmt.Fprintf(continueWrite, "error opening /proc/%s/setgroups: %v", pidString, err)
@@ -229,7 +230,7 @@ func (c *Cmd) Start() error {
 		if len(c.UidMappings) > 0 {
 			// Build the UID map, since writing to the proc file has to be done all at once.
 			u := new(bytes.Buffer)
-			if globalFlagResults.Rootless {
+			if c.Rootless {
 				fmt.Fprintf(u, "%d %d %d\n", c.UidMappings[0].ContainerID, c.UidMappings[0].HostID, c.UidMappings[0].Size)
 			} else {
 				for _, m := range c.UidMappings {
@@ -350,7 +351,7 @@ func bailOnError(err error, format string, a ...interface{}) {
 }
 
 // MaybeReexecUsingUserNamespace re-exec the process in a new namespace
-func MaybeReexecUsingUserNamespace(evenForRoot bool) {
+func MaybeReexecUsingUserNamespace(evenForRoot bool, rootless bool) {
 	// If we've already been through this once, no need to try again.
 	if os.Geteuid() == 0 && IsRootless() {
 		return
@@ -443,9 +444,11 @@ func MaybeReexecUsingUserNamespace(evenForRoot bool) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	cmd.Rootless = rootless
+
 	// Set up a new user namespace with the ID mapping.
 	cmd.UnshareFlags = syscall.CLONE_NEWUSER | syscall.CLONE_NEWNS
-	if globalFlagResults.Rootless {
+	if rootless {
 		cmd.UseNewuidmap = false
 		cmd.UseNewgidmap = false
 	} else {
