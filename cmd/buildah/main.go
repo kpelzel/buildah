@@ -105,7 +105,7 @@ func before(cmd *cobra.Command, args []string) error {
 	case "", "help", "version", "mount":
 		return nil
 	}
-	unshare.MaybeReexecUsingUserNamespace(false)
+	unshare.MaybeReexecUsingUserNamespace(false, globalFlagResults.Rootless)
 	return nil
 }
 
