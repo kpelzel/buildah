@@ -293,7 +293,7 @@ func SafeChown(name string, uid, gid int) error {
 	fmt.Fprintf(os.Stderr, "%v, %v, %v\n", name, uid, gid)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Chown error detected. ignoring...: %v\n", err)
-		// return nil
+		return nil
 	}
 	return err
 }
@@ -303,7 +303,7 @@ func SafeLchown(name string, uid, gid int) error {
 	fmt.Fprintf(os.Stderr, "%v, %v, %v\n", name, uid, gid)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Lchown error detected. ignoring...: %v\n", err)
-		// return nil
+		return nil
 	}
 	return err
 }
