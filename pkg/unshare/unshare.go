@@ -191,7 +191,17 @@ func (c *Cmd) Start() error {
 			}
 
 			// Set the GID map.
-			if c.Rootless {
+			if c.UseNewgidmap {
+				cmd := exec.Command("newgidmap", append([]string{pidString}, strings.Fields(strings.Replace(g.String(), "\n", " ", -1))...)...)
+				g.Reset()
+				cmd.Stdout = g
+				cmd.Stderr = g
+				err := cmd.Run()
+				if err != nil {
+					fmt.Fprintf(continueWrite, "error running newgidmap: %v: %s", err, g.String())
+					return errors.Wrapf(err, "error running newgidmap: %s", g.String())
+				}
+			} else {
 				if c.Rootless {
 					setgroups, err := os.OpenFile(fmt.Sprintf("/proc/%s/setgroups", pidString), os.O_TRUNC|os.O_WRONLY, 0)
 					if err != nil {
@@ -204,36 +214,6 @@ func (c *Cmd) Start() error {
 						return errors.Wrapf(err, "error writing 'deny' to /proc/%s/setgroups", pidString)
 					}
 				}
-				gidmap, err := os.OpenFile(fmt.Sprintf("/proc/%s/gid_map", pidString), os.O_TRUNC|os.O_WRONLY, 0)
-				if err != nil {
-					fmt.Fprintf(continueWrite, "error opening /proc/%s/gid_map: %v", pidString, err)
-					return errors.Wrapf(err, "error opening /proc/%s/gid_map", pidString)
-				}
-				defer gidmap.Close()
-				if _, err := fmt.Fprintf(gidmap, "%s", g.String()); err != nil {
-					fmt.Fprintf(continueWrite, "error writing %q to /proc/%s/gid_map: %v", g.String(), pidString, err)
-					return errors.Wrapf(err, "error writing %q to /proc/%s/gid_map", g.String(), pidString)
-				}
-				g.Reset()
-				cmd.Stdout = g
-				cmd.Stderr = g
-				err := cmd.Run()
-				if err != nil {
-					fmt.Fprintf(continueWrite, "error running newgidmap: %v: %s", err, g.String())
-					return errors.Wrapf(err, "error running newgidmap: %s", g.String())
-				}
-
-			} else if c.UseNewgidmap {
-				cmd := exec.Command("newgidmap", append([]string{pidString}, strings.Fields(strings.Replace(g.String(), "\n", " ", -1))...)...)
-				g.Reset()
-				cmd.Stdout = g
-				cmd.Stderr = g
-				err := cmd.Run()
-				if err != nil {
-					fmt.Fprintf(continueWrite, "error running newgidmap: %v: %s", err, g.String())
-					return errors.Wrapf(err, "error running newgidmap: %s", g.String())
-				}
-			} else {
 				gidmap, err := os.OpenFile(fmt.Sprintf("/proc/%s/gid_map", pidString), os.O_TRUNC|os.O_WRONLY, 0)
 				if err != nil {
 					fmt.Fprintf(continueWrite, "error opening /proc/%s/gid_map: %v", pidString, err)
@@ -259,26 +239,7 @@ func (c *Cmd) Start() error {
 			}
 
 			// Set the UID map.
-			if c.Rootless {
-				uidmap, err := os.OpenFile(fmt.Sprintf("/proc/%s/uid_map", pidString), os.O_TRUNC|os.O_WRONLY, 0)
-				if err != nil {
-					fmt.Fprintf(continueWrite, "error opening /proc/%s/uid_map: %v", pidString, err)
-					return errors.Wrapf(err, "error opening /proc/%s/uid_map", pidString)
-				}
-				defer uidmap.Close()
-				if _, err := fmt.Fprintf(uidmap, "%s", u.String()); err != nil {
-					fmt.Fprintf(continueWrite, "error writing %q to /proc/%s/uid_map: %v", u.String(), pidString, err)
-					return errors.Wrapf(err, "error writing %q to /proc/%s/uid_map", u.String(), pidString)
-				}
-				u.Reset()
-				cmd.Stdout = u
-				cmd.Stderr = u
-				err := cmd.Run()
-				if err != nil {
-					fmt.Fprintf(continueWrite, "error running newuidmap: %v: %s", err, u.String())
-					return errors.Wrapf(err, "error running newuidmap: %s", u.String())
-				}
-			} else if c.UseNewuidmap {
+			if c.UseNewuidmap {
 				cmd := exec.Command("newuidmap", append([]string{pidString}, strings.Fields(strings.Replace(u.String(), "\n", " ", -1))...)...)
 				u.Reset()
 				cmd.Stdout = u
