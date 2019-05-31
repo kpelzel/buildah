@@ -68,6 +68,11 @@ func (c *Cmd) Start() error {
 		c.Env = append(c.Env, fmt.Sprintf("_CONTAINERS_ROOTLESS_GID=%d", os.Getegid()))
 	}
 
+	// Set environment variables for fully rootless mode.
+	if c.Rootless {
+		c.Env = append(c.Env, "_CONTAINERS_FULLY_ROOTLESS=0")
+	}
+
 	// Create the pipe for reading the child's PID.
 	pidRead, pidWrite, err := os.Pipe()
 	if err != nil {

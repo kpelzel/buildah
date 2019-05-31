@@ -283,7 +283,6 @@ func parseSubidFile(path, username string) (ranges, error) {
 
 func checkChownErr(err error, name string, uid, gid int) error {
 	if e, ok := err.(*os.PathError); ok && e.Err == syscall.EINVAL {
-		fmt.Fprintf(os.Stderr, "error in checkchownerror\n")
 		return errors.Wrapf(err, "there might not be enough IDs available in the namespace (requested %d:%d for %s)", uid, gid, name)
 	}
 	return err
