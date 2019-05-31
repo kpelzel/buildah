@@ -290,8 +290,8 @@ func checkChownErr(err error, name string, uid, gid int) error {
 
 func SafeChown(name string, uid, gid int) error {
 	err := checkChownErr(os.Chown(name, uid, gid), name, uid, gid)
-	noSetUID := os.Getenv("_CONTAINERS_NO_SETUID")
-	if noSetUID == "0" && err != nil {
+	noUIDMap := os.Getenv("_CONTAINERS_NO_UIDMAP")
+	if noUIDMap == "0" && err != nil {
 		fmt.Fprintf(os.Stderr, "Chown error detected. Ignoring due to no setuid mode: %v\n", err)
 		return nil
 	}
@@ -300,8 +300,8 @@ func SafeChown(name string, uid, gid int) error {
 
 func SafeLchown(name string, uid, gid int) error {
 	err := checkChownErr(os.Lchown(name, uid, gid), name, uid, gid)
-	noSetUID := os.Getenv("_CONTAINERS_NO_SETUID")
-	if noSetUID == "0" && err != nil {
+	noUIDMap := os.Getenv("_CONTAINERS_NO_UIDMAP")
+	if noUIDMap == "0" && err != nil {
 		fmt.Fprintf(os.Stderr, "Lchown error detected. Ignoring due to no setuid mode: %v\n", err)
 		return nil
 	}
