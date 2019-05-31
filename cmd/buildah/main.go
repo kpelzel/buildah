@@ -15,7 +15,7 @@ import (
 
 type globalFlags struct {
 	Debug             bool
-	Rootless          bool
+	NoSetUID          bool
 	Root              string
 	RunRoot           string
 	StorageDriver     string
@@ -68,7 +68,7 @@ func init() {
 	//rootCmd.TraverseChildren = true
 	rootCmd.Version = fmt.Sprintf("%s (image-spec %s, runtime-spec %s)", buildah.Version, ispecs.Version, rspecs.Version)
 	rootCmd.PersistentFlags().BoolVar(&globalFlagResults.Debug, "debug", false, "print debugging information")
-	rootCmd.PersistentFlags().BoolVar(&globalFlagResults.Rootless, "rootless", false, "does not use setuid tools")
+	rootCmd.PersistentFlags().BoolVar(&globalFlagResults.NoSetUID, "no-setuid", false, "does not use setuid tools")
 	// TODO Need to allow for environment variable
 	rootCmd.PersistentFlags().StringVar(&globalFlagResults.RegistriesConf, "registries-conf", "", "path to registries.conf file (not usually used)")
 	rootCmd.PersistentFlags().StringVar(&globalFlagResults.RegistriesConfDir, "registries-conf-dir", "", "path to registries.conf.d directory (not usually used)")
@@ -105,7 +105,7 @@ func before(cmd *cobra.Command, args []string) error {
 	case "", "help", "version", "mount":
 		return nil
 	}
-	unshare.MaybeReexecUsingUserNamespace(false, globalFlagResults.Rootless)
+	unshare.MaybeReexecUsingUserNamespace(false, globalFlagResults.NoSetUID)
 	return nil
 }
 

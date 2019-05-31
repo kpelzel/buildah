@@ -290,9 +290,9 @@ func checkChownErr(err error, name string, uid, gid int) error {
 
 func SafeChown(name string, uid, gid int) error {
 	err := checkChownErr(os.Chown(name, uid, gid), name, uid, gid)
-	rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
-	if rootless == "0" && err != nil {
-		fmt.Fprintf(os.Stderr, "Chown error detected. Ignoring because fully rootless mode: %v\n", err)
+	noSetUID := os.Getenv("_CONTAINERS_NO_SETUID")
+	if noSetUID == "0" && err != nil {
+		fmt.Fprintf(os.Stderr, "Chown error detected. Ignoring due to no setuid mode: %v\n", err)
 		return nil
 	}
 	return err
@@ -300,9 +300,9 @@ func SafeChown(name string, uid, gid int) error {
 
 func SafeLchown(name string, uid, gid int) error {
 	err := checkChownErr(os.Lchown(name, uid, gid), name, uid, gid)
-	rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
-	if rootless == "0" && err != nil {
-		fmt.Fprintf(os.Stderr, "Lchown error detected. Ignoring because fully rootless mode: %v\n", err)
+	noSetUID := os.Getenv("_CONTAINERS_NO_SETUID")
+	if noSetUID == "0" && err != nil {
+		fmt.Fprintf(os.Stderr, "Lchown error detected. Ignoring due to no setuid mode: %v\n", err)
 		return nil
 	}
 	return err
