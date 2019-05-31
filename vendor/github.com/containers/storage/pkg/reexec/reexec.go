@@ -23,6 +23,8 @@ func Register(name string, initializer func()) {
 func Init() bool {
 	initializer, exists := registeredInitializers[os.Args[0]]
 	if exists {
+		rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
+		fmt.Fprintf(os.Stderr, "rootless: [%v]\n", rootless)
 		initializer()
 
 		return true
