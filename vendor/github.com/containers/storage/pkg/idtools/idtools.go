@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"runtime/debug"
 	"sort"
 	"strconv"
 	"strings"
@@ -292,8 +291,8 @@ func checkChownErr(err error, name string, uid, gid int) error {
 func SafeChown(name string, uid, gid int) error {
 	err := checkChownErr(os.Chown(name, uid, gid), name, uid, gid)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Chown error detected. panicing...: %v\n", err)
-		debug.PrintStack()
+		fmt.Fprintf(os.Stderr, "Chown error detected. ignoring...: %v\n", err)
+		fmt.Fprintf(os.Stdout, "Chown error detected. ignoring...: %v\n", err)
 		return nil
 	}
 	return err
@@ -302,8 +301,8 @@ func SafeChown(name string, uid, gid int) error {
 func SafeLchown(name string, uid, gid int) error {
 	err := checkChownErr(os.Lchown(name, uid, gid), name, uid, gid)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Lchown error detected. panicing...: %v\n", err)
-		debug.PrintStack()
+		fmt.Fprintf(os.Stderr, "Lchown error detected. ignoring...: %v\n", err)
+		fmt.Fprintf(os.Stdout, "Lchown error detected. ignoring...: %v\n", err)
 		return nil
 	}
 	return err
