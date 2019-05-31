@@ -28,9 +28,6 @@ type applyLayerResponse struct {
 // through chroot and rexec.
 func applyLayer() {
 
-	rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
-	fmt.Fprintf(os.Stderr, "applylayer rootless: [%v]\n", rootless)
-
 	var (
 		tmpDir  string
 		err     error
