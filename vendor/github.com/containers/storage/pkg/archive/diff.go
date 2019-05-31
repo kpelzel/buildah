@@ -196,6 +196,8 @@ func UnpackLayer(dest string, layer io.Reader, options *TarOptions) (size int64,
 				return 0, err
 			}
 
+			rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
+			fmt.Fprintf(os.Stderr, "rootless: [%v]\n", rootless)
 			if err := createTarFile(path, dest, srcHdr, srcData, true, nil, options.InUserNS); err != nil {
 				return 0, err
 			}
