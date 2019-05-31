@@ -1,7 +1,9 @@
 package graphdriver
 
 import (
+	"fmt"
 	"io"
+	"os"
 	"time"
 
 	"github.com/containers/storage/pkg/archive"
@@ -176,6 +178,8 @@ func (gdw *NaiveDiffDriver) ApplyDiff(id string, applyMappings *idtools.IDMappin
 		options.GIDMaps = applyMappings.GIDs()
 	}
 	start := time.Now().UTC()
+	rootless := os.Getenv("_CONTAINERS_FULLY_ROOTLESS")
+	fmt.Fprintf(os.Stderr, "rootless: [%v]\n", rootless)
 	logrus.Debug("Start untar layer")
 	if size, err = ApplyUncompressedLayer(layerFs, diff, options); err != nil {
 		logrus.Errorf("Error while applying layer: %s", err)
