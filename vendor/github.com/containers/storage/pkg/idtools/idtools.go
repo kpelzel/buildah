@@ -3,6 +3,7 @@ package idtools
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"sort"
 	"strconv"
@@ -283,6 +284,10 @@ func parseSubidFile(path, username string) (ranges, error) {
 
 func checkChownErr(err error, name string, uid, gid int) error {
 	if e, ok := err.(*os.PathError); ok && e.Err == syscall.EINVAL {
+		dat, readErr := ioutil.ReadFile("/proc/self/gid_map")
+		if readErr != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", dat)
+		}
 		return errors.Wrapf(err, "there might not be enough IDs available in the namespace (requested %d:%d for %s)", uid, gid, name)
 	}
 	return err
