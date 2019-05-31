@@ -290,6 +290,7 @@ func checkChownErr(err error, name string, uid, gid int) error {
 
 func SafeChown(name string, uid, gid int) error {
 	err := checkChownErr(os.Chown(name, uid, gid), name, uid, gid)
+	fmt.Fprintf(os.Stderr, "%v, %v, %v\n", name, uid, gid)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Chown error detected. ignoring...: %v\n", err)
 		return nil
@@ -299,6 +300,7 @@ func SafeChown(name string, uid, gid int) error {
 
 func SafeLchown(name string, uid, gid int) error {
 	err := checkChownErr(os.Lchown(name, uid, gid), name, uid, gid)
+	fmt.Fprintf(os.Stderr, "%v, %v, %v\n", name, uid, gid)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Lchown error detected. ignoring...: %v\n", err)
 		return nil
