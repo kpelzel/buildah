@@ -174,6 +174,7 @@ func resolveImage(ctx context.Context, systemContext *types.SystemContext, store
 		}
 
 		pulledImg, pulledReference, err := pullAndFindImage(ctx, store, srcRef, options, systemContext)
+		fmt.Fprintf(os.Stderr, "finished with pullandfindimage\n")
 		if err != nil {
 			logrus.Debugf("unable to pull and read image %q: %v", image, err)
 			failures = append(failures, failure{resolvedImageName: image, err: err})
