@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 
 	"github.com/containers/buildah/util"
@@ -252,6 +253,7 @@ func newBuilder(ctx context.Context, store storage.Store, options BuilderOptions
 			return nil, err
 		}
 	}
+	fmt.Fprintf(os.Stderr, "resolveimage complete\n")
 	image := options.FromImage
 	imageID := ""
 	topLayer := ""
