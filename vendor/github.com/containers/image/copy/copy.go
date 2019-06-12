@@ -201,10 +201,11 @@ func Image(ctx context.Context, policyContext *signature.PolicyContext, destRef,
 		logrus.Debugf("Source is a manifest list; copying (only) instance %s", instanceDigest)
 		unparsedInstance := image.UnparsedInstance(rawSource, &instanceDigest)
 
+		fmt.Fprintf(os.Stderr, "\nstarting copyOneImage in Image():copy.go\n\n")
 		if manifest, err = c.copyOneImage(ctx, policyContext, options, unparsedInstance); err != nil {
 			return nil, err
 		}
-		fmt.Fprintf(os.Stderr, "finished copyOneImage in copy.go\n")
+		fmt.Fprintf(os.Stderr, "\nfinished copyOneImage in Image():copy.go\n\n")
 	}
 
 	if err := c.dest.Commit(ctx); err != nil {
