@@ -33,6 +33,7 @@ func pullAndFindImage(ctx context.Context, store storage.Store, srcRef types.Ima
 		BlobDirectory: options.BlobDirectory,
 	}
 	ref, err := pullImage(ctx, store, srcRef, pullOptions, sc)
+	fmt.Fprintf(os.Stderr, "finished pull image\n")
 	if err != nil {
 		logrus.Debugf("error pulling image %q: %v", transports.ImageName(srcRef), err)
 		return nil, nil, err
