@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 
 	"strings"
 
@@ -268,7 +269,7 @@ func pullImage(ctx context.Context, store storage.Store, srcRef types.ImageRefer
 		logrus.Debugf("error copying src image [%q] to dest image [%q] err: %v", transports.ImageName(srcRef), destName, err)
 		return nil, err
 	}
-	fmt.Fprintf("finished cp.image stuff in pull.go\n")
+	fmt.Fprintf(os.Stderr, "finished cp.image stuff in pull.go\n")
 	return destRef, nil
 }
 
