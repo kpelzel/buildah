@@ -34,11 +34,11 @@ func pullAndFindImage(ctx context.Context, store storage.Store, srcRef types.Ima
 	}
 	fmt.Fprintf(os.Stderr, "\nstarting pullImage in new.go\n\n")
 	ref, err := pullImage(ctx, store, srcRef, pullOptions, sc)
-	fmt.Fprintf(os.Stderr, "\nfinished pullImage in new.go\n\n")
 	if err != nil {
 		logrus.Debugf("error pulling image %q: %v", transports.ImageName(srcRef), err)
 		return nil, nil, err
 	}
+	fmt.Fprintf(os.Stderr, "\nfinished pullImage in new.go\n\n")
 	img, err := is.Transport.GetStoreImage(store, ref)
 	if err != nil {
 		logrus.Debugf("error reading pulled image %q: %v", transports.ImageName(srcRef), err)
