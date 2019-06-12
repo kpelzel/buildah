@@ -686,6 +686,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 		lastLayer = layer.ID
 	}
 
+	fmt.Fprintf(os.Stderr, "\nCheckpoint 1!\n\n")
 	// If one of those blobs was a configuration blob, then we can try to dig out the date when the image
 	// was originally created, in case we're just copying it.  If not, no harm done.
 	options := &storage.ImageOptions{}
@@ -740,6 +741,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 			return errors.Wrapf(err, "error saving big data %q for image %q", blob.String(), img.ID)
 		}
 	}
+	fmt.Fprintf(os.Stderr, "\nCheckpoint 2!\n\n")
 	// Set the reference's name on the image.
 	if name := s.imageRef.DockerReference(); len(oldNames) > 0 || name != nil {
 		names := []string{}
@@ -765,6 +767,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 	if err != nil {
 		return errors.Wrapf(err, "error computing manifest digest")
 	}
+	fmt.Fprintf(os.Stderr, "\nCheckpoint 3!\n\n")
 	if err := s.imageRef.transport.store.SetImageBigData(img.ID, manifestBigDataKey(manifestDigest), s.manifest, manifest.Digest); err != nil {
 		if _, err2 := s.imageRef.transport.store.DeleteImage(img.ID, true); err2 != nil {
 			logrus.Debugf("error deleting incomplete image %q: %v", img.ID, err2)
