@@ -369,7 +369,7 @@ func (c *copier) copyOneImage(ctx context.Context, policyContext *signature.Poli
 	if err := c.dest.PutSignatures(ctx, sigs); err != nil {
 		return nil, errors.Wrap(err, "Error writing signatures")
 	}
-	fmt.Fprintf(os.Stderr, "Finished storing signatures\n")
+	panic("COPY PANIC")
 
 	return manifestBytes, nil
 }
