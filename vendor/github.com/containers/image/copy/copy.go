@@ -208,11 +208,11 @@ func Image(ctx context.Context, policyContext *signature.PolicyContext, destRef,
 		fmt.Fprintf(os.Stderr, "\nfinished copyOneImage in Image():copy.go\n\n")
 	}
 
-	fmt.Fprintf(os.Stderr, "\nStarting c.dest.Commit in Image():copy.go")
+	fmt.Fprintf(os.Stderr, "\nStarting c.dest.Commit in Image():copy.go\n\n")
 	if err := c.dest.Commit(ctx); err != nil {
 		return nil, errors.Wrap(err, "Error committing the finished image")
 	}
-	fmt.Fprintf(os.Stderr, "\nFinished c.dest.Commit in Image():copy.go")
+	fmt.Fprintf(os.Stderr, "\nFinished c.dest.Commit in Image():copy.go\n\n")
 
 	return manifest, nil
 }
