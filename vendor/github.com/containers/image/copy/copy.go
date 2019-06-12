@@ -204,6 +204,7 @@ func Image(ctx context.Context, policyContext *signature.PolicyContext, destRef,
 		if manifest, err = c.copyOneImage(ctx, policyContext, options, unparsedInstance); err != nil {
 			return nil, err
 		}
+		fmt.Fprintf(os.Stderr, "finished copyOneImage in copy.go\n")
 	}
 
 	if err := c.dest.Commit(ctx); err != nil {
@@ -369,7 +370,6 @@ func (c *copier) copyOneImage(ctx context.Context, policyContext *signature.Poli
 	if err := c.dest.PutSignatures(ctx, sigs); err != nil {
 		return nil, errors.Wrap(err, "Error writing signatures")
 	}
-	// panic("COPY PANIC")
 
 	return manifestBytes, nil
 }
