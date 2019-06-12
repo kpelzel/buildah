@@ -32,8 +32,9 @@ func pullAndFindImage(ctx context.Context, store storage.Store, srcRef types.Ima
 		SystemContext: options.SystemContext,
 		BlobDirectory: options.BlobDirectory,
 	}
+	fmt.Fprintf(os.Stderr, "\nstarting pullImage in new.go\n\n")
 	ref, err := pullImage(ctx, store, srcRef, pullOptions, sc)
-	fmt.Fprintf(os.Stderr, "finished pullImage in new.go\n")
+	fmt.Fprintf(os.Stderr, "\nfinished pullImage in new.go\n\n")
 	if err != nil {
 		logrus.Debugf("error pulling image %q: %v", transports.ImageName(srcRef), err)
 		return nil, nil, err
@@ -176,12 +177,13 @@ func resolveImage(ctx context.Context, systemContext *types.SystemContext, store
 
 		fmt.Fprintf(os.Stderr, "\nstarting pullandfindimage[%v] in new.go\n\n", index)
 		pulledImg, pulledReference, err := pullAndFindImage(ctx, store, srcRef, options, systemContext)
-		fmt.Fprintf(os.Stderr, "\nfinished with pullandfindimage[%v] in new.go\n\n", index)
 		if err != nil {
 			logrus.Debugf("unable to pull and read image %q: %v", image, err)
 			failures = append(failures, failure{resolvedImageName: image, err: err})
 			continue
 		}
+		fmt.Fprintf(os.Stderr, "\nfinished with pullandfindimage[%v] in new.go\n\n", index)
+
 		return pulledReference, transport, pulledImg, nil
 	}
 
