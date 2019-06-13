@@ -233,6 +233,7 @@ func fromCmd(c *cobra.Command, args []string, iopts fromReply) error {
 		options.ReportWriter = os.Stderr
 	}
 
+	fmt.Fprintf(os.Stderr, "\nNEW BUILDER!\n\n")
 	builder, err := buildah.NewBuilder(getContext(), store, options)
 	if err != nil {
 		return err
