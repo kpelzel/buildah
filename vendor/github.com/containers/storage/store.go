@@ -148,6 +148,8 @@ type StoreOptions struct {
 	// for use inside of a user namespace where UID mapping is being used.
 	UIDMap []idtools.IDMap `json:"uidmap,omitempty"`
 	GIDMap []idtools.IDMap `json:"gidmap,omitempty"`
+
+	SingleUserMap bool `json:"single-user-map,omitempty"`
 }
 
 // Store wraps up the various types of file-based stores that we use into a
