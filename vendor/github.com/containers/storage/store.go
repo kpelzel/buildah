@@ -777,7 +777,7 @@ func (s *store) LayerStore() (LayerStore, error) {
 	if err := os.MkdirAll(glpath, 0700); err != nil {
 		return nil, err
 	}
-	rls, err := newLayerStore(rlpath, glpath, driver, s.uidMap, s.gidMap)
+	rls, err := newLayerStore(rlpath, glpath, driver, s.uidMap, s.gidMap, s.ignoreChownErrors)
 	if err != nil {
 		return nil, err
 	}
@@ -958,7 +958,7 @@ func (s *store) PutLayer(id, parent string, names []string, mountLabel string, w
 			},
 		}
 	}
-	layerOptions.IgnoreChownErrors = s.ignoreChownErrors
+	// rlstore.ignoreChownErrors = s.ignoreChownErrors
 	fmt.Fprintf(os.Stderr, "\nStarting & Returning Put() from PutLayer:store.go\n")
 	fmt.Fprintf(os.Stderr, "(before rlstore.put) s.ignorechownerrors: %+v\n\n", s.ignoreChownErrors)
 	return rlstore.Put(id, parentLayer, names, mountLabel, nil, layerOptions, writeable, nil, diff)
