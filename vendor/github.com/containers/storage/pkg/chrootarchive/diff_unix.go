@@ -115,8 +115,10 @@ func applyLayerHandler(dest string, layer io.Reader, options *archive.TarOptions
 
 	cmd := reexec.Command("storage-applyLayer", dest)
 	cmd.Stdin = layer
-	fmt.Fprintf(os.Stderr, "applylayerhandler in diff_unix.go before reexec, options: %+v\n", options)
+	fmt.Fprintf(os.Stderr, "3 applylayerhandler in diff_unix.go before reexec, options: %+v\n", options)
 	fmt.Fprintf(os.Stderr, "json data: %s\n\n", data)
+	freshdata, _ := json.Marshal(options)
+	fmt.Fprintf(os.Stderr, "\nfresh json data: %s\n\n", freshdata)
 	if cmd.Env == nil {
 		cmd.Env = []string{fmt.Sprintf("OPT=%s", data)}
 	} else {
