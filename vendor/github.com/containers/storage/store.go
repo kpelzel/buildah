@@ -958,7 +958,8 @@ func (s *store) PutLayer(id, parent string, names []string, mountLabel string, w
 			},
 		}
 	}
-	fmt.Fprintf(os.Stderr, "\nStarting & Returning Put() from PutLayer:store.go\n\n")
+	fmt.Fprintf(os.Stderr, "\nStarting & Returning Put() from PutLayer:store.go\n")
+	fmt.Fprintf(os.Stderr, "options: %+v\n\n", options)
 	return rlstore.Put(id, parentLayer, names, mountLabel, nil, layerOptions, writeable, nil, diff)
 }
 
