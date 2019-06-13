@@ -196,7 +196,6 @@ func UnpackLayer(dest string, layer io.Reader, options *TarOptions) (size int64,
 				return 0, err
 			}
 
-			fmt.Fprintf(os.Stderr, "unpacklayer in diff.go, options.ignorechownerrors: %+v\n", options.IgnoreChownErrors)
 			if err := createTarFile(path, dest, srcHdr, srcData, true, nil, options.InUserNS, options.IgnoreChownErrors); err != nil {
 				return 0, err
 			}
