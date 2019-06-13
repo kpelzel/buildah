@@ -79,6 +79,8 @@ func getStore(c *cobra.Command) (storage.Store, error) {
 		options.GIDMap = gidmap
 	}
 
+	options.IgnoreChownErrors = globalFlagResults.SingleUserMap
+
 	// If a subcommand has the flags, check if they are set; if so, override the global values
 	localUIDMapFlag := c.Flags().Lookup("userns-uid-map")
 	localGIDMapFlag := c.Flags().Lookup("userns-gid-map")
