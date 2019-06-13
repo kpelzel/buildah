@@ -495,7 +495,8 @@ type LayerOptions struct {
 	// TemplateLayer is the ID of a layer whose contents will be used to
 	// initialize this layer.  If set, it should be a child of the layer
 	// which we want to use as the parent of the new layer.
-	TemplateLayer string
+	TemplateLayer     string
+	IgnoreChownErrors bool
 }
 
 // ImageOptions is used for passing options to a Store's CreateImage() method.
@@ -959,7 +960,7 @@ func (s *store) PutLayer(id, parent string, names []string, mountLabel string, w
 		}
 	}
 	fmt.Fprintf(os.Stderr, "\nStarting & Returning Put() from PutLayer:store.go\n")
-	fmt.Fprintf(os.Stderr, "options: %+v\n\n", options)
+	fmt.Fprintf(os.Stderr, "options: %+v\n\n", s.ignoreChownErrors)
 	return rlstore.Put(id, parentLayer, names, mountLabel, nil, layerOptions, writeable, nil, diff)
 }
 
