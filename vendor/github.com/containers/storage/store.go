@@ -520,22 +520,22 @@ type ContainerOptions struct {
 }
 
 type store struct {
-	lastLoaded      time.Time
-	runRoot         string
-	graphLock       Locker
-	graphRoot       string
-	graphDriverName string
-	graphOptions    []string
-	uidMap          []idtools.IDMap
-	gidMap          []idtools.IDMap
-	singleUserMode  bool
-	graphDriver     drivers.Driver
-	layerStore      LayerStore
-	roLayerStores   []ROLayerStore
-	imageStore      ImageStore
-	roImageStores   []ROImageStore
-	containerStore  ContainerStore
-	digestLockRoot  string
+	lastLoaded        time.Time
+	runRoot           string
+	graphLock         Locker
+	graphRoot         string
+	graphDriverName   string
+	graphOptions      []string
+	uidMap            []idtools.IDMap
+	gidMap            []idtools.IDMap
+	ignoreChownErrors bool
+	graphDriver       drivers.Driver
+	layerStore        LayerStore
+	roLayerStores     []ROLayerStore
+	imageStore        ImageStore
+	roImageStores     []ROImageStore
+	containerStore    ContainerStore
+	digestLockRoot    string
 }
 
 // GetStore attempts to find an already-created Store object matching the
@@ -608,14 +608,14 @@ func GetStore(options StoreOptions) (Store, error) {
 		return nil, err
 	}
 	s := &store{
-		runRoot:         options.RunRoot,
-		graphLock:       graphLock,
-		graphRoot:       options.GraphRoot,
-		graphDriverName: options.GraphDriverName,
-		graphOptions:    options.GraphDriverOptions,
-		uidMap:          copyIDMap(options.UIDMap),
-		gidMap:          copyIDMap(options.GIDMap),
-		singleUserMode:  options.IgnoreChownErrors,
+		runRoot:           options.RunRoot,
+		graphLock:         graphLock,
+		graphRoot:         options.GraphRoot,
+		graphDriverName:   options.GraphDriverName,
+		graphOptions:      options.GraphDriverOptions,
+		uidMap:            copyIDMap(options.UIDMap),
+		gidMap:            copyIDMap(options.GIDMap),
+		ignoreChownErrors: options.IgnoreChownErrors,
 	}
 	if err := s.load(); err != nil {
 		return nil, err
