@@ -245,6 +245,7 @@ type layerStore struct {
 	byuncompressedsum map[digest.Digest][]string
 	uidMap            []idtools.IDMap
 	gidMap            []idtools.IDMap
+	ignoreChownErrors bool
 }
 
 func copyLayer(l *Layer) *Layer {
@@ -1240,7 +1241,7 @@ func (r *layerStore) ApplyDiff(to string, diff io.Reader) (size int64, err error
 	if err != nil {
 		return -1, err
 	}
-	size, err = r.driver.ApplyDiff(layer.ID, r.layerMappings(layer), layer.Parent, layer.MountLabel, payload)
+	size, err = r.driver.ApplyDiff(layer.ID, r.layerMappings(layer), layer.Parent, layer.MountLabel, payload, r.ignoreChownErrors)
 	if err != nil {
 		return -1, err
 	}
