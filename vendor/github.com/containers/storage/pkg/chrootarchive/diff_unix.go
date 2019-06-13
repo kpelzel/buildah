@@ -96,6 +96,7 @@ func applyLayerHandler(dest string, layer io.Reader, options *archive.TarOptions
 
 		layer = decompressed
 	}
+	fmt.Fprintf(os.Stderr, "1 applylayerhandler in diff_unix.go before reexec, options: %+v\n", options)
 	if options == nil {
 		options = &archive.TarOptions{}
 		if rsystem.RunningInUserNS() {
@@ -106,6 +107,7 @@ func applyLayerHandler(dest string, layer io.Reader, options *archive.TarOptions
 		options.ExcludePatterns = []string{}
 	}
 
+	fmt.Fprintf(os.Stderr, "2 applylayerhandler in diff_unix.go before reexec, options: %+v\n", options)
 	data, err := json.Marshal(options)
 	if err != nil {
 		return 0, fmt.Errorf("ApplyLayer json encode: %v", err)
