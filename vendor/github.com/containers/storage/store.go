@@ -149,7 +149,7 @@ type StoreOptions struct {
 	UIDMap []idtools.IDMap `json:"uidmap,omitempty"`
 	GIDMap []idtools.IDMap `json:"gidmap,omitempty"`
 
-	SingleUserMap bool `json:"single-user-map,omitempty"`
+	SingleUserMode bool `json:"single-user-mode,omitempty"`
 }
 
 // Store wraps up the various types of file-based stores that we use into a
@@ -528,6 +528,7 @@ type store struct {
 	graphOptions    []string
 	uidMap          []idtools.IDMap
 	gidMap          []idtools.IDMap
+	singleUserMode  bool
 	graphDriver     drivers.Driver
 	layerStore      LayerStore
 	roLayerStores   []ROLayerStore
@@ -614,6 +615,7 @@ func GetStore(options StoreOptions) (Store, error) {
 		graphOptions:    options.GraphDriverOptions,
 		uidMap:          copyIDMap(options.UIDMap),
 		gidMap:          copyIDMap(options.GIDMap),
+		singleUserMode:  options.SingleUserMode,
 	}
 	if err := s.load(); err != nil {
 		return nil, err
