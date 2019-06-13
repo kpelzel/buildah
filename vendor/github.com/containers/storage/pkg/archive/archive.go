@@ -642,6 +642,7 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
 		if err != nil {
 			if !ignoreChownErrors {
 				fmt.Fprintf(os.Stderr, "chown error detected, but ignore it\n")
+				return err
 			} else {
 				return err
 			}
