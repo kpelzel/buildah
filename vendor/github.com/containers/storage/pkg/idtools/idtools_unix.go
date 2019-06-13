@@ -20,7 +20,7 @@ var (
 	getentCmd string
 )
 
-func mkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int, mkAll, chownExisting bool) error {
+func mkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int, mkAll, chownExisting, ignoreChownErrors bool) error {
 	// make an array containing the original path asked for, plus (for mkAll == true)
 	// all path components leading up to the complete path that don't exist before we MkdirAll
 	// so that we can chown all of them properly at the end.  If chownExisting is false, we won't
@@ -30,7 +30,7 @@ func mkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int, mkAll, chown
 		paths = []string{path}
 	} else if err == nil && chownExisting {
 		// short-circuit--we were called with an existing directory and chown was requested
-		return SafeChown(path, ownerUID, ownerGID)
+		return SafeChown(path, ownerUID, ownerGID, ignoreChownErrors)
 	} else if err == nil {
 		// nothing to do; directory path fully exists already and chown was NOT requested
 		return nil
@@ -60,7 +60,7 @@ func mkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int, mkAll, chown
 	// even if it existed, we will chown the requested path + any subpaths that
 	// didn't exist when we called MkdirAll
 	for _, pathComponent := range paths {
-		if err := SafeChown(pathComponent, ownerUID, ownerGID); err != nil {
+		if err := SafeChown(pathComponent, ownerUID, ownerGID, ignoreChownErrors); err != nil {
 			return err
 		}
 	}
