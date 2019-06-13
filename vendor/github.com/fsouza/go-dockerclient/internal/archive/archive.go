@@ -65,15 +65,14 @@ type WhiteoutFormat int
 
 // TarOptions wraps the tar options.
 type TarOptions struct {
-	IncludeFiles      []string
-	ExcludePatterns   []string
-	Compression       Compression
-	NoLchown          bool
-	UIDMaps           []idtools.IDMap
-	GIDMaps           []idtools.IDMap
-	IgnoreChownErrors bool
-	ChownOpts         *idtools.Identity
-	IncludeSourceDir  bool
+	IncludeFiles     []string
+	ExcludePatterns  []string
+	Compression      Compression
+	NoLchown         bool
+	UIDMaps          []idtools.IDMap
+	GIDMaps          []idtools.IDMap
+	ChownOpts        *idtools.Identity
+	IncludeSourceDir bool
 	// WhiteoutFormat is the expected on disk format for whiteout files.
 	// This format will be converted to the standard format on pack
 	// and from the standard format on unpack.
