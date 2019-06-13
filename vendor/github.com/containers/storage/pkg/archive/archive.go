@@ -640,7 +640,7 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
 		fmt.Fprintf(os.Stderr, "in createtarfile, ignorechownerrors: %+v\n", ignoreChownErrors)
 		err := idtools.SafeLchown(path, chownOpts.UID, chownOpts.GID)
 		if err != nil {
-			if !ignoreChownErrors {
+			if ignoreChownErrors {
 				fmt.Fprintf(os.Stderr, "chown error detected, but ignore it\n")
 				return err
 			} else {
