@@ -3385,7 +3385,7 @@ func ReloadConfigurationFile(configFile string, storeOptions *StoreOptions) {
 		storeOptions.GIDMap = append(storeOptions.GIDMap, gidmap...)
 	}
 	if config.Storage.Options.IgnoreChownErrors != false {
-		storeOptions.IgnoreChownErrors = 
+		storeOptions.IgnoreChownErrors = config.Storage.Options.IgnoreChownErrors
 	}
 	if os.Getenv("STORAGE_DRIVER") != "" {
 		storeOptions.GraphDriverName = os.Getenv("STORAGE_DRIVER")
