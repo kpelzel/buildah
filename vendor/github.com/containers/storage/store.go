@@ -149,7 +149,7 @@ type StoreOptions struct {
 	UIDMap []idtools.IDMap `json:"uidmap,omitempty"`
 	GIDMap []idtools.IDMap `json:"gidmap,omitempty"`
 
-	SingleUserMode bool `json:"single-user-mode,omitempty"`
+	IgnoreChownErrors bool `json:"ignore-chown-errors,omitempty"`
 }
 
 // Store wraps up the various types of file-based stores that we use into a
@@ -3383,6 +3383,9 @@ func ReloadConfigurationFile(configFile string, storeOptions *StoreOptions) {
 		fmt.Print(err)
 	} else {
 		storeOptions.GIDMap = append(storeOptions.GIDMap, gidmap...)
+	}
+	if config.Storage.Options.IgnoreChownErrors != false {
+		storeOptions.IgnoreChownErrors = 
 	}
 	if os.Getenv("STORAGE_DRIVER") != "" {
 		storeOptions.GraphDriverName = os.Getenv("STORAGE_DRIVER")
