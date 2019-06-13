@@ -615,7 +615,7 @@ func GetStore(options StoreOptions) (Store, error) {
 		graphOptions:    options.GraphDriverOptions,
 		uidMap:          copyIDMap(options.UIDMap),
 		gidMap:          copyIDMap(options.GIDMap),
-		singleUserMode:  options.SingleUserMode,
+		singleUserMode:  options.IgnoreChownErrors,
 	}
 	if err := s.load(); err != nil {
 		return nil, err
