@@ -61,6 +61,7 @@ func applyLayer() {
 	}
 
 	os.Setenv("TMPDIR", tmpDir)
+	fmt.Fprintf(os.Stderr, "applylayer in diff_unix.go, options.ignorechownerrors: %+v\n", options.IgnoreChownErrors)
 	size, err := archive.UnpackLayer("/", os.Stdin, options)
 	os.RemoveAll(tmpDir)
 	if err != nil {
