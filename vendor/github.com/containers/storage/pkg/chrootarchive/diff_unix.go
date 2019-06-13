@@ -48,7 +48,7 @@ func applyLayer() {
 		fatal(err)
 	}
 
-	fmt.Fprintf(os.Stderr, "environment: %+v", os.Getenv("OPT"))
+	fmt.Fprintf(os.Stderr, "\nenvironment: %+v\n\n", os.Getenv("OPT"))
 
 	if err := json.Unmarshal([]byte(os.Getenv("OPT")), &options); err != nil {
 		fatal(err)
