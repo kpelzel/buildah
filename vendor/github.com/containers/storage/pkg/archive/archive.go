@@ -637,7 +637,7 @@ func createTarFile(path, extractDir string, hdr *tar.Header, reader io.Reader, L
 		if chownOpts == nil {
 			chownOpts = &idtools.IDPair{UID: hdr.Uid, GID: hdr.Gid}
 		}
-		if err := idtools.SafeLchown(path, chownOpts.UID, chownOpts.GID, ignoreChownErrors); err != nil {
+		if err := idtools.SafeLchown(path, chownOpts.UID, chownOpts.GID); err != nil && !ignoreChownErrors {
 			return err
 		}
 	}
@@ -985,7 +985,7 @@ loop:
 			chownOpts = &idtools.IDPair{UID: hdr.Uid, GID: hdr.Gid}
 		}
 
-		if err := createTarFile(path, dest, hdr, trBuf, !options.NoLchown, chownOpts, options.InUserNS); err != nil {
+		if err := createTarFile(path, dest, hdr, trBuf, !options.NoLchown, chownOpts, options.InUserNS, options.IgnoreChownErrors); err != nil {
 			return err
 		}
 

@@ -42,49 +42,34 @@ const (
 // function will still change ownership to the requested uid/gid pair.
 // Deprecated: Use MkdirAllAndChown
 func MkdirAllAs(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, true, true, false)
+	return mkdirAs(path, mode, ownerUID, ownerGID, true, true)
 }
 
 // MkdirAs creates a directory and then modifies ownership to the requested uid/gid.
 // If the directory already exists, this function still changes ownership
 // Deprecated: Use MkdirAndChown with a IDPair
 func MkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, false, true, false)
-}
-
-// MkdirAllAsForce creates a directory (include any along the path) and then modifies
-// ownership to the requested uid/gid.  If the directory already exists, this
-// function will still change ownership to the requested uid/gid pair.
-// Deprecated: Use MkdirAllAndChown
-func MkdirAllAsForce(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, true, true, true)
-}
-
-// MkdirAsForce creates a directory and then modifies ownership to the requested uid/gid.
-// If the directory already exists, this function still changes ownership
-// Deprecated: Use MkdirAndChown with a IDPair
-func MkdirAsForce(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, false, true, true)
+	return mkdirAs(path, mode, ownerUID, ownerGID, false, true)
 }
 
 // MkdirAllAndChown creates a directory (include any along the path) and then modifies
 // ownership to the requested uid/gid.  If the directory already exists, this
 // function will still change ownership to the requested uid/gid pair.
 func MkdirAllAndChown(path string, mode os.FileMode, ids IDPair) error {
-	return mkdirAs(path, mode, ids.UID, ids.GID, true, true, false)
+	return mkdirAs(path, mode, ids.UID, ids.GID, true, true)
 }
 
 // MkdirAndChown creates a directory and then modifies ownership to the requested uid/gid.
 // If the directory already exists, this function still changes ownership
 func MkdirAndChown(path string, mode os.FileMode, ids IDPair) error {
-	return mkdirAs(path, mode, ids.UID, ids.GID, false, true, false)
+	return mkdirAs(path, mode, ids.UID, ids.GID, false, true)
 }
 
 // MkdirAllAndChownNew creates a directory (include any along the path) and then modifies
 // ownership ONLY of newly created directories to the requested uid/gid. If the
 // directories along the path exist, no change of ownership will be performed
 func MkdirAllAndChownNew(path string, mode os.FileMode, ids IDPair) error {
-	return mkdirAs(path, mode, ids.UID, ids.GID, true, false, false)
+	return mkdirAs(path, mode, ids.UID, ids.GID, true, false)
 }
 
 // GetRootUIDGID retrieves the remapped root uid/gid pair from the set of maps.
@@ -296,22 +281,17 @@ func parseSubidFile(path, username string) (ranges, error) {
 	return rangeList, nil
 }
 
-func checkChownErr(err error, name string, uid, gid int, ignoreChownErrors bool) error {
+func checkChownErr(err error, name string, uid, gid int) error {
 	if e, ok := err.(*os.PathError); ok && e.Err == syscall.EINVAL {
-		// panic("PANIC!")
-		if ignoreChownErrors {
-			fmt.Fprintf(os.Stderr, "Chown error detected. Ignoring due to single user mapping: %v\n", err)
-			return nil
-		}
 		return errors.Wrapf(err, "there might not be enough IDs available in the namespace (requested %d:%d for %s)", uid, gid, name)
 	}
 	return err
 }
 
-func SafeChown(name string, uid, gid int, ignoreChownErrors bool) error {
-	return checkChownErr(os.Chown(name, uid, gid), name, uid, gid, ignoreChownErrors)
+func SafeChown(name string, uid, gid int) error {
+	return checkChownErr(os.Chown(name, uid, gid), name, uid, gid)
 }
 
-func SafeLchown(name string, uid, gid int, ignoreChownErrors bool) error {
-	return checkChownErr(os.Lchown(name, uid, gid), name, uid, gid, ignoreChownErrors)
+func SafeLchown(name string, uid, gid int) error {
+	return checkChownErr(os.Lchown(name, uid, gid), name, uid, gid)
 }
