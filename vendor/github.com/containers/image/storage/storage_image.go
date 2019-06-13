@@ -584,6 +584,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 	layerBlobs := man.LayerInfos()
 	// Extract or find the layers.
 	lastLayer := ""
+	fmt.Fprintf(os.Stderr, "\nCheckpoint 0.1!\n\n")
 	for _, blob := range layerBlobs {
 		if blob.EmptyLayer {
 			continue
@@ -624,6 +625,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 		// Check if we previously cached a file with that blob's contents.  If we didn't,
 		// then we need to read the desired contents from a layer.
 		filename, ok := s.filenames[blob.Digest]
+		fmt.Fprintf(os.Stderr, "\nCheckpoint 0.2!\n\n")
 		if !ok {
 			// Try to find the layer with contents matching that blobsum.
 			layer := ""
@@ -658,6 +660,7 @@ func (s *storageImageDestination) Commit(ctx context.Context) error {
 				diff.Close()
 				return errors.Wrapf(err, "error creating temporary file %q", filename)
 			}
+			fmt.Fprintf(os.Stderr, "\nCheckpoint 0.3!\n\n")
 			// Copy the data to the file.
 			// TODO: This can take quite some time, and should ideally be cancellable using
 			// ctx.Done().
