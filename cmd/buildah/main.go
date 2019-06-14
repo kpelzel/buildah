@@ -24,6 +24,7 @@ type globalFlags struct {
 	StorageOpts       []string
 	UserNSUID         []string
 	UserNSGID         []string
+	IgnoreChownErrors bool
 }
 
 var rootCmd = &cobra.Command{
@@ -67,6 +68,7 @@ func init() {
 	//rootCmd.TraverseChildren = true
 	rootCmd.Version = fmt.Sprintf("%s (image-spec %s, runtime-spec %s)", buildah.Version, ispecs.Version, rspecs.Version)
 	rootCmd.PersistentFlags().BoolVar(&globalFlagResults.Debug, "debug", false, "print debugging information")
+	rootCmd.PersistentFlags().BoolVar(&globalFlagResults.IgnoreChownErrors, "ignore-chown-errors", false, "ignores errors caused from chowning when doing single user mapping")
 	// TODO Need to allow for environment variable
 	rootCmd.PersistentFlags().StringVar(&globalFlagResults.RegistriesConf, "registries-conf", "", "path to registries.conf file (not usually used)")
 	rootCmd.PersistentFlags().StringVar(&globalFlagResults.RegistriesConfDir, "registries-conf-dir", "", "path to registries.conf.d directory (not usually used)")

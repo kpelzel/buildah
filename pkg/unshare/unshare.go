@@ -236,7 +236,7 @@ func (c *Cmd) Start() error {
 				fmt.Fprintf(u, "%d %d %d\n", m.ContainerID, m.HostID, m.Size)
 			}
 			uidmapSet := false
-			// Set the GID map.
+			// Set the UID map.
 			if c.UseNewuidmap {
 				cmd := exec.Command("newuidmap", append([]string{pidString}, strings.Fields(strings.Replace(u.String(), "\n", " ", -1))...)...)
 				u.Reset()
